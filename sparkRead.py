@@ -17,7 +17,6 @@ df.show()
 
 df = df.limit(100000)
 
-dbpass = 'LEjInoLkpalbuecK'
 """
 #Test With specifc group sequence.
 
@@ -55,7 +54,7 @@ Same Fields with sequnce number:
 """
 
 # Sequence should iterate through 1-15
-for i in range(1, 6):
+for i in range(1, 16):
     provider_licence_df = df.select("npi", "Provider License Number_"+ str(i), "Provider License Number State Code_" + str(i), "Healthcare Provider Taxonomy Code_" + str(i), "Healthcare Provider Primary Taxonomy Switch_" + str(i)).withColumn("sequence_number", lit(i))
     provider_licence_df = provider_licence_df.withColumnRenamed("Provider License Number_"+ str(i), "provider_license_number")\
         .withColumnRenamed("Provider License Number State Code_" + str(i), "provider_license_number_state_code")\
@@ -63,6 +62,7 @@ for i in range(1, 6):
         .withColumnRenamed("Healthcare Provider Primary Taxonomy Switch_" + str(i), "healthcare_provider_taxonomy_switch")
     provider_licence_df = provider_licence_df.select("npi", "sequence_number", "provider_license_number", "provider_license_number_state_code", "healthcare_provider_taxonomy_code", "healthcare_provider_taxonomy_switch")
     provider_licence_df.show()
+    taxonomy_group.write.option("header","true").csv("gs://jay-storage-cli/cms/provider_licence/"+str(i))
 
 
 
@@ -111,6 +111,7 @@ mailing_address = mailing_address.withColumnRenamed("Provider First Line Busines
 
 mailing_address = mailing_address.select("npi", "address_type_code", "first_line", "second_line", "city_name", "state_name", "postal_code", "country_code", "telephone_number", "fax_number")
 mailing_address.show()
+mailing_address.write.option("header","true").csv("gs://jay-storage-cli/cms/address/mailing/")
 
 
 
@@ -135,6 +136,7 @@ practice_address = practice_address.withColumnRenamed("Provider First Line Busin
 
 practice_address = practice_address.select("npi", "address_type_code", "first_line", "second_line", "city_name", "state_name", "postal_code", "country_code", "telephone_number", "fax_number")
 practice_address.show()
+practice_address.write.option("header","true").csv("gs://jay-storage-cli/cms/address/practice/")
 
 
 
@@ -264,6 +266,7 @@ cms_nppes = cms_nppes.withColumnRenamed("Entity Type Code", "entity_type_code")\
     .withColumnRenamed("Authorized Official Credential Text", "authorizing_official_credential")
 
 cms_nppes.printSchema()
+cms_nppes.write.option("header","true").csv("gs://jay-storage-cli/cms/cms_nppes/")
 
 
 
@@ -292,5 +295,7 @@ for i in range(1, 51) :
         .withColumnRenamed("Other Provider Identifier Issuer_"+str(i), "provider_other_identification_issuer")
     provider_other_id = provider_other_id.select("npi", "sequence_number", "provider_other_identification", "provider_other_identification_type_code", "provider_other_identification_state_code", "provider_other_identification_issuer")
     provider_other_id.show()
+    provider_other_id.write.option("header","true").csv("gs://jay-storage-cli/cms/provider_other_id/" + str(i))
+    
 
 
